@@ -125,5 +125,4 @@
   (add-hook 'evil-hybrid-state-exit-hook 'sim-save-if-bufferfilename)
   (add-hook 'org-mode-hook #'org-indent-mode)
   (add-hook 'text-mode-hook #'visual-line-mode)
-  (add-hook 'after-save-hook #'sim-tangle)
-  )
+  (add-hook 'after-save-hook #'sim-tangle))

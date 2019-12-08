@@ -1,0 +1,7 @@
+#+TITLE: Simulacrum Layer Configuration
+
+* Simulacrum Layer
+** Theming
+** Functions
+** Layer Dependencies
+** Package Configurations
