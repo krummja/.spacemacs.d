@@ -7,16 +7,17 @@
    dotspacemacs-configuration-layers
    '(;; Simulacrum Spacemacs
      simulacrum
-     ;; Programming Languages
+     ;; Programming
+     bibtex
      common-lisp 
      emacs-lisp
      html
-     bibtex
      (latex :variables
             latex-enable-folding t
             latex-enable-auto-fill t)
      (markdown :variables
                markdown-live-preview-engine 'vmd)
+     python
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
@@ -122,9 +123,7 @@
 
 (defun dotspacemacs/user-config ()
   (add-hook 'evil-hybrid-state-exit-hook 'sim-save-if-bufferfilename)
-  (add-hook 'org-mode-hook #'org-zotxt-mode)
   (add-hook 'org-mode-hook #'org-indent-mode)
   (add-hook 'text-mode-hook #'visual-line-mode)
-  (defconst zotxt-url-base
-    "http://localhost:23119/zotxt")
+  (add-hook 'after-save-hook #'sim-tangle)
   )

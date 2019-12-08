@@ -1,5 +1,12 @@
 ;;; funcs.el --- simulacrum layer utility functions -*- lexical-binding: t -*-
 
+(defun sim-tangle ()
+  "If the current file is in .spacemacs.d/tangles/, the code blocks are tangled."
+  (when (equal (file-name-directory (directory-file-name buffer-file-name))
+               (concat (getenv "HOME") "/.spacemacs.d/tangles/"))
+    (org-babel-tangle)
+    (message "%s tangled" buffer-file-name)))
+
 (defun sim-save-if-bufferfilename ()
   (if (buffer-file-name) (progn (save-buffer))
     (message "no file associated with this buffer: do nothing")))
