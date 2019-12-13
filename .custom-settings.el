@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("c7aa6fcf85e6fe4ea381733d9166d982bbc423af4a55c26f55f5d0cfb0ce1835" "4bdc0dfc53ae06323e031baf691f414babf13c9c9c35014dd07bb42c4db27c24" default)))
+    ("a9c619535d63719a15f22e3c450a03062d3fed1e356ef96d33015849c4c43946" "dc677c8ebead5c0d6a7ac8a5b109ad57f42e0fe406e4626510e638d36bcc42df" "c7aa6fcf85e6fe4ea381733d9166d982bbc423af4a55c26f55f5d0cfb0ce1835" "4bdc0dfc53ae06323e031baf691f414babf13c9c9c35014dd07bb42c4db27c24" default)))
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
@@ -15,4 +15,22 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(cursor ((t (:background "#e1d9c2"))))
+ '(font-latex-sectioning-0-face ((t (:inherit font-latex-sectioning-1-face :height 1.0))))
+ '(font-latex-sectioning-1-face ((t (:inherit font-latex-sectioning-2-face :height 1.0))))
+ '(font-latex-sectioning-2-face ((t (:inherit font-latex-sectioning-3-face :height 1.0))))
+ '(font-latex-sectioning-3-face ((t (:inherit font-latex-sectioning-4-face :height 1.0))))
+ '(font-latex-sectioning-4-face ((t (:inherit font-latex-sectioning-5-face :height 1.0))))
+ '(helm-selection ((t (:inherit highlight :distant-foreground "black"))))
+ '(org-block ((t (:inherit fixed-pitch :background "#d5caaa"))))
+ '(org-block-begin-line ((t (:inherit fixed-pitch :background "#c4b587" :foreground "#897743"))))
+ '(org-block-end-line ((t (:inherit fixed-pitch :background "#c4b587" :foreground "#c4b587"))))
+ '(org-document-title ((t (:inherit default :foreground "#B71C1C" :underline "#aaaaaa" :height (lambda (_x) (poet--height 1.5))))))
+ '(org-level-1 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-level-2 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-level-3 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-level-5 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-level-6 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-level-7 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-level-8 ((t (:inherit default :foreground "#770b0b" :height (lambda (_x) (poet--height 1.3))))))
+ '(org-link ((t (:inherit link :foreground "coral4" :underline t)))))

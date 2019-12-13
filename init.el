@@ -43,6 +43,7 @@
    dotspacemacs-additional-packages
    '(
      poet-theme
+	 elpy
      )
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '()
@@ -56,7 +57,7 @@
    dotspacemacs-elpa-subdirectory nil
    dotspacemacs-editing-style 'hybrid
    dotspacemacs-verbose-loading nil
-   dotspacemacs-startup-banner 'official
+   dotspacemacs-startup-banner '005
    dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
    dotspacemacs-startup-buffer-responsive t
@@ -65,7 +66,7 @@
                          spacemacs-dark)
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Fira Code"
-                               :size 14
+                               :size 12
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -116,13 +117,39 @@
   ))
 
 (defun dotspacemacs/user-init ()
-  (defconst user-layer-dir (file-name-as-directory "~/.spacemacs.d/layers/simulacrum"))
+  (defconst user-layer-dir (file-name-as-directory
+                            "~/.spacemacs.d/layers/simulacrum"))
 
   (setq custom-file "~/.spacemacs.d/.custom-settings.el")
   (load custom-file))
 
 (defun dotspacemacs/user-config ()
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable))
+
+  (setq-default TeX-master nil)
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq writeroom-width 100)
+  (setq org-latex-create-formula-image-program 'dvipng)
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook (lambda ()
+                               (push
+                                '("xelatex" "xelatex %s" TeX-run-TeX nil t
+                                  :help "Run xelatex on file")
+                                (TeX-command-list))))
+
+  (setq poet-variable-headers t)
+  (set-face-attribute 'default nil :family "Fira Code")
+  (set-face-attribute 'fixed-pitch nil :family "Fira Code" :height 90)
+  (set-face-attribute 'variable-pitch nil :family "Gentium" :height 130)
   (add-hook 'evil-hybrid-state-exit-hook 'sim-save-if-bufferfilename)
-  (add-hook 'org-mode-hook #'org-indent-mode)
-  (add-hook 'text-mode-hook #'visual-line-mode)
-  (add-hook 'after-save-hook #'sim-tangle))
+  (add-hook 'text-mode-hook
+            (lambda ()
+              (variable-pitch-mode 1)))
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'after-save-hook 'sim-tangle))

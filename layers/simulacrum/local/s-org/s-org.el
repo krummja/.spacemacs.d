@@ -55,7 +55,7 @@
         org-catch-invisible-edits 'show-and-error
         org-cycle-separator-lines 0
         spaceline-org-clock-p t
-        org-bullets-bullet-list '("▶")
+        org-bullets-bullet-list '("⋄")
         org-todo-keywords '((sequence "TODO" "|")
                             (sequence "PROG" "WAIT" "PROJECT" "|")
                             (sequence "|" "DONE"))

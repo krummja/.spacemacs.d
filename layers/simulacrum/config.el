@@ -40,7 +40,8 @@
                                  (lambda (x) (equal x "NA"))
                                  (mapcar (lambda (face)
                                            (let ((face-name (car face))
-                                                 (face-attrs (nth (cl-position theme themes) (cdr face))))
+                                                 (face-attrs (nth (cl-position theme themes)
+                                                                  (cdr face))))
                                              (if face-attrs
                                                  `(,face-name ,@face-attrs)
                                                "NA"))) (sim-get-proper-faces)))))
