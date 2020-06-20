@@ -1,49 +1,37 @@
+;; -*- mode: emacs-lisp -*-
+
 (defun dotspacemacs/layers ()
   (setq-default
-   dotspacemacs-distribution 'spacemacs-base
+   dotspacemacs-distribution 'spacemacs
    dotspacemacs-enable-lazy-installation 'unused
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
-   '(;; Simulacrum Spacemacs
-     simulacrum
-     ;; Programming
-     bibtex
-     common-lisp 
-     emacs-lisp
-     html
-     (latex :variables
-            latex-enable-folding t
-            latex-enable-auto-fill t)
-     (markdown :variables
-               markdown-live-preview-engine 'vmd)
-     python
-     (auto-completion :variables
-                      auto-completion-enable-help-tooltip t
+   '((auto-completion :variables
                       auto-completion-enable-snippets-in-popup t
-                      auto-completion-enable-sort-by-usage t
-                      auto-completion-private-snippets-directory "~/.spacemacs.d/snippets")
-     ;; Miscellaneous Config Layers
-     better-defaults
-     colors
+                      auto-completion-enable-sort-by-usage t)
+     bibtex
+     emacs-lisp
      helm
-     git
-     github
-     (org :variables
-          org-enable-github-support t)
-     pandoc
-     pdf
-     theming
-     typography
-     (version-control :variables
-                      version-control-diff-tool 'git-gutter
-                      version-control-global-margin t
-                      version-control-diff-side 'left)
+     javascript
+     markdown
+     typescript
+     org
      )
    dotspacemacs-additional-packages
    '(
-     poet-theme
-	 elpy
+     doom-modeline
+     doom-themes
+     guide-key
+     magit
+     org-noter
+     org-ref
+     org-roam
+     pdfgrep
+     pdf-tools
+     tide
+     typescript-mode
+     zotxt
      )
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '()
@@ -57,26 +45,26 @@
    dotspacemacs-elpa-subdirectory nil
    dotspacemacs-editing-style 'hybrid
    dotspacemacs-verbose-loading nil
-   dotspacemacs-startup-banner '005
+   dotspacemacs-startup-banner 'official
    dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
    dotspacemacs-startup-buffer-responsive t
-   dotspacemacs-scratch-mode 'text-mode
-   dotspacemacs-themes '(poet
-                         spacemacs-dark)
+   dotspacemacs-scratch-mode 'org-mode
+   dotspacemacs-themes '(spacemacs-dark
+                         spacemacs-light)
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Fira Code"
-                               :size 12
+                               :size 14
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.1
+                               )
    dotspacemacs-leader-key "SPC"
    dotspacemacs-emacs-command-key "SPC"
    dotspacemacs-ex-command-key ":"
    dotspacemacs-emacs-leader-key "M-m"
    dotspacemacs-major-mode-leader-key ","
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
-   dotspacemacs-mode-line-theme 'spacemacs
    dotspacemacs-distinguish-gui-tab nil
    dotspacemacs-remap-Y-to-y$ nil
    dotspacemacs-retain-visual-state-on-shift t
@@ -104,6 +92,7 @@
    dotspacemacs-show-transient-state-title t
    dotspacemacs-show-transient-state-color-guide t
    dotspacemacs-mode-line-unicode-symbols t
+   dotspacemacs-mode-line-theme 'doom
    dotspacemacs-smooth-scrolling t
    dotspacemacs-line-numbers nil
    dotspacemacs-folding-method 'evil
@@ -114,42 +103,157 @@
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
    dotspacemacs-whitespace-cleanup 'trailing
-  ))
+   ))
+
+
+(defun my-save-if-bufferfilename()
+  (if (buffer-file-name)
+      (progn
+        (save-buffer))
+    (message "No file is associated with this buffer: doing nothing.")))
+
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1))
+
 
 (defun dotspacemacs/user-init ()
-  (defconst user-layer-dir (file-name-as-directory
-                            "~/.spacemacs.d/layers/simulacrum"))
+  ;; Package Archives
+  (setq package-archives
+        '(("marmalade" . "http://marmalade-repo.org/packages/")
+          ("melpa" . "http://melpa.org/packages/")
+          ("melpa-stable" . "https://stable.melpa.org/packages/")))
+  (package-initialize)
 
+  ;; Custom Settings File
   (setq custom-file "~/.spacemacs.d/.custom-settings.el")
-  (load custom-file))
+  (load-file custom-file))
 
 (defun dotspacemacs/user-config ()
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable))
+  ;; Requisites
+  (require 'org)
+  (require 'org-projectile)
+  (require 'org-roam)
 
-  (setq-default TeX-master nil)
+
+  ;; Keybinding Modifications
+  (global-unset-key (kbd "C-z"))
+
+
+  ;; User Variables
+  ;;;; Paths
+  (setq LATEX-PATH     "~/texmf")
+  (setq LIBRARY-PATH   "~/Dropbox/Library" ) ;; For documents
+  (setq NOTEBOOK-PATH  "~/Notebook")         ;; For research notes
+  (setq WORKSPACE-PATH "~/Workspace")        ;; For programming
+
+  ;;;; Workspace Directories
+  (setq CLOJURE    (concatenate 'string WORKSPACE-PATH "/CLOJURE"))
+  (setq CSHARP     (concatenate 'string WORKSPACE-PATH "/CSHARP"))
+  (setq DART       (concatenate 'string WORKSPACE-PATH "/DART"))
+  (setq LATEX      (concatenate 'string WORKSPACE-PATH "/LATEX"))
+  (setq TYPESCRIPT (concatenate 'string WORKSPACE-PATH "/TYPESCRIPT"))
+
+  ;;;; Endpoints
+  (setq BIBLIOGRAPHY (concatenate 'string LATEX-PATH    "/bibtex/bib/master.bib"))
+  (setq NOTES        (concatenate 'string NOTEBOOK-PATH "/notes.org"))
+  (setq TEX-PREAMBLE (concatenate 'string LATEX-PATH    "/latex/tex/local/preamble.tex"))
+
+  ;; Theming
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-Iosvkem t)
+  (require 'doom-modeline)
+  (doom-modeline-mode 1)
+  (setq-default line-spacing 1)
+
+
+  ;; Package Configurations
+  ;;;; BibTeX
+  (setq bibtex-completion-bibliography BIBLIOGRAPHY)
+  (setq bibtex-completion-library-path LIBRARY-PATH)
+  (setq bibtex-completion-notes-path   NOTES)
+
+  ;;;; Company
+  (setq company-tooltip-align-annotations t)
+
+  ;;;; LaTeX
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
-  (setq writeroom-width 100)
   (setq org-latex-create-formula-image-program 'dvipng)
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+  (setq-default TeX-master nil)
+
+  ;;;; Org-Mode
+  (setq org-superstar-headline-bullets-list '("▶"))
+
+  ;;;; Org-Noter
+  (setq org-noter-separate-notes-from-heading t)
+  (setq org-noter-default-notes-file-names NOTES)
+  (setq org-noter-notes-search-path NOTEBOOK-PATH)
+
+  ;;;; Org-Projectile
+  (setq org-projectile-projects-file (concatenate 'string WORKSPACE-PATH "/projects.org"))
+  (push (org-projectile-project-todo-entry) org-capture-templates)
+  (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
+  (global-set-key (kbd "C-c n p") 'org-projectile-project-todo-completing-read)
+
+  ;;;; Org-Ref
+  (setq org-ref-default-bibliography BIBLIOGRAPHY)
+  (setq org-ref-pdf-directory        LIBRARY-PATH)
+  (setq org-ref-bibliography-notes   NOTES)
+
+  ;;;; Org-Roam
+  (setq org-roam-index-file (concatenate 'string NOTEBOOK-PATH "/index.org"))
+  (define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
+  (define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
+  (define-key org-roam-mode-map (kbd "C-c n j") #'org-roam-jump-to-index)
+  (define-key org-roam-mode-map (kbd "C-c n b") #'org-roam-switch-to-buffer)
+  (define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph)
+  (define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
+  (org-roam-mode +1)
+
+  ;;;; PDF-View
+  (require 'pdf-view)
+  (setq pdf-info-epdfinfo-program "/usr/bin/epdfinfo")
+  (setq pdf-view-midnight-colors `(,(face-attribute 'default :foreground) .
+                                   ,(face-attribute 'default :background)))
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
+  (add-hook 'pdf-view-mode-hook (lambda ()
+                                  (pdf-view-midnight-minor-mode)))
+  (provide 'init-pdfview)
+
+  ;;;; Reftex
+  (setq reftex-default-bibliography BIBLIOGRAPHY)
+
+  ;;;; Zotxt
+  (defconst zotxt-url-base "http://localhost:23119/zotxt")
+
+
+  ;; Hooks
+  ;;;; Auto-Saving
+  (add-hook 'evil-hybrid-state-exit-hook 'my-save-if-bufferfilename)
+
+  ;;;; Editing
+  (add-hook 'text-mode-hook #'visual-line-mode)
+  (add-hook 'org-mode-hook  #'org-indent-mode)
+  (add-hook 'org-mode-hook  #'org-zotxt-mode)
+
+  ;;;; LaTeX
   (add-hook 'LaTeX-mode-hook 'visual-line-mode)
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
   (add-hook 'LaTeX-mode-hook (lambda ()
                                (push
-                                '("xelatex" "xelatex %s" TeX-run-TeX nil t
-                                  :help "Run xelatex on file")
-                                (TeX-command-list))))
+                                '("arara" "arara %s" TeX-run-Tex nil t
+                                  :help "Run arara on the current file.")
+                                TeX-command-list)))
 
-  (setq poet-variable-headers t)
-  (set-face-attribute 'default nil :family "Fira Code")
-  (set-face-attribute 'fixed-pitch nil :family "Fira Code" :height 90)
-  (set-face-attribute 'variable-pitch nil :family "Gentium" :height 130)
-  (add-hook 'evil-hybrid-state-exit-hook 'sim-save-if-bufferfilename)
-  (add-hook 'text-mode-hook
-            (lambda ()
-              (variable-pitch-mode 1)))
-  (add-hook 'org-mode-hook 'org-indent-mode)
-  (add-hook 'text-mode-hook 'visual-line-mode)
-  (add-hook 'after-save-hook 'sim-tangle))
+  ;;;; Tide
+  (add-hook 'before-save-hook 'tide-forkmat-before-save)
+  (add-hook 'typescript-mode-hook #'setup-tide-mode))
